@@ -4,7 +4,7 @@ import { Server } from 'socket.io';
 import cors from 'cors';
 import { registerHandlers } from './socket/handlers.js';
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 10000;
 
 const app = express();
 app.use(cors());
@@ -19,10 +19,14 @@ const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
   cors: {
-    origin: '*',
-    methods: ['GET', 'POST'],
+    origin: [
+      "https://themafiaclubbot.vercel.app",
+      "http://localhost:5173",
+      "http://localhost:5174",
+    ],
+    methods: ["GET", "POST"],
   },
-  maxHttpBufferSize: 10 * 1024 * 1024, // 10 MB for voice/video messages
+  maxHttpBufferSize: 10 * 1024 * 1024,
 });
 
 registerHandlers(io);
