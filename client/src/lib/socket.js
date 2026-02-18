@@ -2,7 +2,7 @@ import { io } from 'socket.io-client';
 
 // In dev mode, Vite proxy forwards /socket.io → localhost:3001.
 // In production, set VITE_WS_URL to the real server URL.
-const URL = import.meta.env.VITE_WS_URL || 'http://localhost:3001';
+const URL = import.meta.env.VITE_WS_URL || 'https://mafia-tma.onrender.com';
 
 console.log('[socket] Инициализация, URL:', URL);
 
