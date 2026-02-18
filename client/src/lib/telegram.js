@@ -34,15 +34,24 @@ export function getTelegramUser() {
 }
 
 export function shareInviteLink(roomId) {
-  const botUrl = import.meta.env.VITE_BOT_URL || 'https://t.me/mafia_tma_bot';
-  const link = `${botUrl}?startapp=${roomId}`;
+  const link = `https://t.me/themafiaclub_bot/play?startapp=${roomId}`;
+  const text = 'Присоединяйся к игре в Мафию! 🎭';
 
   if (tg?.openTelegramLink) {
-    tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('Присоединяйся к игре в Мафию! 🎭')}`);
+    tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`);
   } else {
     navigator.clipboard?.writeText(link);
     alert('Ссылка скопирована!');
   }
+}
+
+/**
+ * Get the startapp parameter (room ID) passed via invite link.
+ * When someone opens t.me/themafiaclub_bot/play?startapp=1234,
+ * Telegram passes "1234" as tg.initDataUnsafe.start_param.
+ */
+export function getStartParam() {
+  return tg?.initDataUnsafe?.start_param || null;
 }
 
 export { tg };

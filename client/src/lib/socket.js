@@ -7,7 +7,7 @@ const URL = import.meta.env.VITE_WS_URL || 'https://mafia-tma.onrender.com';
 console.log('[socket] Инициализация, URL:', URL);
 
 export const socket = io(URL, {
-  autoConnect: false,
+  autoConnect: true,
   transports: ['websocket', 'polling'],
 });
 

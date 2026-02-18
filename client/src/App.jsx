@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useGameStore } from './stores/gameStore';
 import { socket } from './lib/socket';
-import { initTelegram, getTelegramUser } from './lib/telegram';
+import { initTelegram, getTelegramUser, getStartParam } from './lib/telegram';
 import Home from './pages/Home';
 import GameLobby from './components/GameLobby';
 
@@ -33,6 +33,13 @@ export default function App() {
     const onConnect = () => {
       console.log('[app] ✅ Socket подключён:', socket.id);
       setConnected(true);
+
+      // Auto-join room from invite link (t.me/themafiaclub_bot/play?startapp=ROOM_ID)
+      const inviteRoomId = getStartParam();
+      if (inviteRoomId && !useGameStore.getState().currentRoom) {
+        console.log('[app] 🔗 Приглашение в комнату:', inviteRoomId);
+        useGameStore.getState().joinRoom(inviteRoomId);
+      }
     };
 
     const onDisconnect = () => {
