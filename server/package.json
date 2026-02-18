@@ -1,0 +1,16 @@
+{
+  "name": "mafia-tma-server",
+  "version": "1.0.0",
+  "description": "Mafia TMA — Game Server (Socket.io + Express)",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "socket.io": "^4.8.1"
+  }
+}
