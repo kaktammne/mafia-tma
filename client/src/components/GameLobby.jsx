@@ -587,7 +587,7 @@ export default function GameLobby() {
 
         {/* ═══════ TABLE + SEATS ═══════ */}
         <div className="flex-1 flex items-center justify-center min-h-0">
-          <div className="relative" style={{ width: BOX, height: BOX }}>
+          <div className="relative" style={{ width: BOX, height: BOX, marginLeft: -38 }}>
 
             {/* 1) Orbit ring — shows exactly where seat centers sit */}
             <div className="absolute rounded-full pointer-events-none" style={{
