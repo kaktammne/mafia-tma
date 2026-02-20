@@ -500,15 +500,15 @@ export default function GameLobby() {
   const seats = Array.from({ length: maxPlayers }, (_, i) => players.find(p => p.seat === i) || null);
 
   const SEAT_SIZE  = 48;
-  const SEAT_R     = 170;                    // +3cm (113 + 57)
-  const TABLE_R    = SEAT_R - SEAT_SIZE / 2 - 10 - 57 + 38; // +2cm radius
+  const SEAT_R     = 166;                    // -1mm total
+  const TABLE_R    = SEAT_R - SEAT_SIZE / 2 - 10 - 57 + 38 - 4; // -1mm total
   const TABLE_D    = TABLE_R * 2;
   const MARGIN     = 30;
   const BOX        = Math.ceil((SEAT_R + SEAT_SIZE / 2 + MARGIN) * 2);
   const CX         = BOX / 2;
   const CY         = BOX / 2;
 
-  const SEAT_OFFSET_X = -19;
+  const SEAT_OFFSET_X = -21;
   const SEAT_OFFSET_Y = -19;
   const pos = getSeatPositions(maxPlayers, SEAT_R, SEAT_R, CX + SEAT_OFFSET_X, CY + SEAT_OFFSET_Y);
 
