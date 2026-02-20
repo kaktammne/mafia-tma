@@ -102,7 +102,7 @@ export class GameEngine {
     const speaker = alivePlayers[idx];
     this.narrate(
       `Слово игроку ${speaker.name}`,
-      `${idx + 1} из ${alivePlayers.length} · 15 сек`
+      `${idx + 1} из ${alivePlayers.length} · 30 сек`
     );
 
     if (speaker.isBot) {
@@ -120,7 +120,7 @@ export class GameEngine {
       this.schedule(() => {
         this.room.currentSpeaker++;
         this.runSpeakerTurn();
-      }, 15000);
+      }, 30000);
     }
   }
 
@@ -148,7 +148,7 @@ export class GameEngine {
       this.scheduleBotNightActions();
     }, 2000);
 
-    this.schedule(() => this.resolveNight(), 15000);
+    this.schedule(() => this.resolveNight(), 30000);
   }
 
   scheduleBotNightActions() {
@@ -271,7 +271,7 @@ export class GameEngine {
     const speaker = alive[idx];
     this.narrate(
       `Говорит ${speaker.name}`,
-      `${idx + 1} из ${alive.length} · 15 сек`
+      `${idx + 1} из ${alive.length} · 30 сек`
     );
 
     if (speaker.isBot) {
@@ -290,7 +290,7 @@ export class GameEngine {
       this.schedule(() => {
         this.room.currentSpeaker++;
         this.runDaySpeakerTurn();
-      }, 15000);
+      }, 30000);
     }
   }
 

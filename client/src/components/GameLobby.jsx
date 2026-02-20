@@ -46,7 +46,7 @@ function getSeatPositions(count, rx, ry, cx, cy) {
 
 function Seat({ player, index, x, y, isMe, isSpeaking, isDead, phase }) {
   const showRole = isMe && player?.role && phase !== 'lobby';
-  const size = 44;
+  const size = 48;
 
   return (
     <motion.div
@@ -54,20 +54,20 @@ function Seat({ player, index, x, y, isMe, isSpeaking, isDead, phase }) {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0 }}
       transition={{ delay: index * 0.035, type: 'spring', stiffness: 300, damping: 22 }}
-      className="absolute flex flex-col items-center"
+      className="absolute"
       style={{ left: x, top: y, transform: 'translate(-50%, -50%)' }}
     >
       {/* Glow ring for speaker */}
       {isSpeaking && player && (
         <motion.div
-          className="absolute rounded-full"
-          style={{ inset: -6 }}
-          animate={{ scale: [1, 1.12, 1], opacity: [0.5, 0.9, 0.5] }}
+          className="absolute rounded-full pointer-events-none"
+          style={{ inset: -8 }}
+          animate={{ scale: [1, 1.1, 1], opacity: [0.35, 0.85, 0.35] }}
           transition={{ repeat: Infinity, duration: 1.3 }}
         >
           <div className="w-full h-full rounded-full" style={{
-            background: 'conic-gradient(from 0deg, rgba(234,179,8,0.6), rgba(251,146,60,0.4), rgba(234,179,8,0.6))',
-            filter: 'blur(4px)',
+            background: 'conic-gradient(from 0deg, rgba(250,204,21,0.75), rgba(251,146,60,0.45), rgba(250,204,21,0.75))',
+            filter: 'blur(6px)',
           }} />
         </motion.div>
       )}
@@ -76,19 +76,20 @@ function Seat({ player, index, x, y, isMe, isSpeaking, isDead, phase }) {
       <div
         className={[
           `relative flex items-center justify-center rounded-full transition-all duration-300`,
-          !player && 'border border-dashed border-white/[0.08]',
+          !player && 'border border-dashed border-white/[0.1]',
           player && isDead && 'grayscale opacity-30',
-          player && isMe && !isSpeaking && 'ring-[1.5px] ring-gold-400/60 ring-offset-1 ring-offset-noir-950',
-          player && isSpeaking && 'ring-2 ring-yellow-400 ring-offset-1 ring-offset-noir-950',
-          player && !isMe && !isSpeaking && 'ring-[0.5px] ring-white/[0.07]',
+          player && isMe && !isSpeaking && 'ring-2 ring-gold-400/65 ring-offset-2 ring-offset-noir-950',
+          player && isSpeaking && 'ring-2 ring-yellow-300 ring-offset-2 ring-offset-noir-950',
+          player && !isMe && !isSpeaking && 'ring ring-white/[0.08]',
         ].filter(Boolean).join(' ')}
         style={{
           width: size, height: size,
+          boxShadow: player ? '0 10px 22px rgba(0,0,0,0.4)' : 'none',
           background: player
             ? player.avatarColor
-              ? `linear-gradient(145deg, ${player.avatarColor}55, ${player.avatarColor}20)`
-              : 'linear-gradient(145deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02))'
-            : 'rgba(255,255,255,0.015)',
+              ? `linear-gradient(145deg, ${player.avatarColor}66, ${player.avatarColor}22)`
+              : 'linear-gradient(145deg, rgba(255,255,255,0.09), rgba(255,255,255,0.025))'
+            : 'rgba(255,255,255,0.02)',
         }}
       >
         {player ? (
@@ -111,7 +112,7 @@ function Seat({ player, index, x, y, isMe, isSpeaking, isDead, phase }) {
               <span className="absolute -top-1.5 -right-0.5 text-[10px] leading-none">👑</span>
             )}
             {player.isBot && (
-              <div className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 px-[5px] py-[1px] rounded-full bg-violet-500/70 text-[6px] font-extrabold text-white tracking-widest leading-none">AI</div>
+              <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-[6px] py-[1px] rounded-full bg-violet-500/70 text-[6px] font-extrabold text-white tracking-widest leading-none border border-violet-300/20">AI</div>
             )}
           </>
         ) : (
@@ -122,7 +123,7 @@ function Seat({ player, index, x, y, isMe, isSpeaking, isDead, phase }) {
       {/* Name */}
       {player && (
         <span className={[
-          'mt-1 text-[8px] font-medium leading-none max-w-[56px] truncate text-center',
+          'absolute top-[calc(100%+6px)] left-1/2 -translate-x-1/2 px-1.5 py-[2px] rounded-full bg-black/40 border border-white/[0.06] text-[8px] font-medium leading-none max-w-[72px] truncate text-center backdrop-blur-sm',
           isDead && 'text-red-400/50 line-through',
           !isDead && isMe && 'text-gold-400/90',
           !isDead && !isMe && player.isBot && 'text-violet-300/60',
@@ -134,7 +135,7 @@ function Seat({ player, index, x, y, isMe, isSpeaking, isDead, phase }) {
 
       {/* Role chip */}
       {showRole && !isDead && (
-        <div className={`mt-[2px] px-1.5 py-[1px] rounded text-[6px] font-bold text-white/90 bg-gradient-to-r ${ROLE_COLORS[player.role] || 'from-slate-600 to-slate-700'}`}>
+        <div className={`absolute top-[calc(100%+21px)] left-1/2 -translate-x-1/2 px-1.5 py-[1px] rounded text-[6px] font-bold text-white/90 bg-gradient-to-r ${ROLE_COLORS[player.role] || 'from-slate-600 to-slate-700'}`}>
           {ROLE_EMOJI[player.role]} {ROLE_LABELS[player.role]}
         </div>
       )}
@@ -152,23 +153,25 @@ const PHASE_ICON = {
 };
 
 function Narrator({ message, sub, phase }) {
+  const Icon = ROLE_ICONS.sheriff;
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
       <motion.div
         key={phase}
         initial={{ scale: 0.7, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="w-11 h-11 rounded-full flex items-center justify-center mb-1"
+        className="w-12 h-12 rounded-full flex items-center justify-center mb-1.5 border border-white/[0.09]"
         style={{
-          background: 'radial-gradient(circle at 40% 35%, rgba(255,255,255,0.06), rgba(0,0,0,0.3))',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)',
+          background: 'radial-gradient(circle at 40% 35%, rgba(255,255,255,0.08), rgba(0,0,0,0.38))',
+          boxShadow: '0 6px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)',
         }}
       >
         <span className="text-lg select-none">{PHASE_ICON[phase] || '🎭'}</span>
       </motion.div>
 
-      <div className="px-2 py-[2px] rounded-full bg-black/40 border border-white/[0.05] backdrop-blur-sm">
-        <span className="text-[7px] font-bold text-white/30 uppercase tracking-[0.15em] select-none">Ведущий</span>
+      <div className="px-2.5 py-[2px] rounded-full bg-black/45 border border-white/[0.06] backdrop-blur-sm flex items-center gap-1">
+        <Icon className="w-2.5 h-2.5 text-white/35" />
+        <span className="text-[7px] font-bold text-white/35 uppercase tracking-[0.15em] select-none">Ведущий</span>
       </div>
 
       <AnimatePresence mode="wait">
@@ -178,7 +181,7 @@ function Narrator({ message, sub, phase }) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -4 }}
           transition={{ duration: 0.25 }}
-          className="mt-1.5 px-3 py-1.5 rounded-xl bg-black/50 border border-white/[0.06] backdrop-blur-md max-w-[180px] text-center"
+          className="mt-2 px-3 py-1.5 rounded-2xl bg-black/55 border border-white/[0.08] backdrop-blur-md max-w-[190px] text-center shadow-[0_10px_24px_rgba(0,0,0,0.45)]"
         >
           <p className="text-[10px] font-semibold text-white/90 leading-snug">{message}</p>
           {sub && <p className="text-[8px] text-white/30 mt-0.5 leading-snug">{sub}</p>}
@@ -493,11 +496,21 @@ export default function GameLobby() {
     }
   }, [isDealing, myRole, seenRole]);
 
-  // ─── Layout math ───
+  // ─── Layout: all from table center ───
   const seats = Array.from({ length: maxPlayers }, (_, i) => players.find(p => p.seat === i) || null);
-  const TW = 310, TH = 280;
-  const cx = TW / 2, cy = TH / 2;
-  const pos = getSeatPositions(maxPlayers, TW / 2 - 10, TH / 2 - 6, cx, cy);
+
+  const SEAT_SIZE  = 48;
+  const SEAT_R     = 170;                    // +3cm (113 + 57)
+  const TABLE_R    = SEAT_R - SEAT_SIZE / 2 - 10 - 57 + 38; // +2cm radius
+  const TABLE_D    = TABLE_R * 2;
+  const MARGIN     = 30;
+  const BOX        = Math.ceil((SEAT_R + SEAT_SIZE / 2 + MARGIN) * 2);
+  const CX         = BOX / 2;
+  const CY         = BOX / 2;
+
+  const SEAT_OFFSET_X = -19;
+  const SEAT_OFFSET_Y = -19;
+  const pos = getSeatPositions(maxPlayers, SEAT_R, SEAT_R, CX + SEAT_OFFSET_X, CY + SEAT_OFFSET_Y);
 
   // ─── Render ───
   return (
@@ -518,7 +531,7 @@ export default function GameLobby() {
       {isDay && <div className="absolute -top-24 -right-24 w-72 h-72 bg-amber-300/[0.03] rounded-full blur-[100px] pointer-events-none" />}
       {!isNight && !isDay && <div className="absolute -top-24 -right-24 w-72 h-72 bg-blood-600/[0.06] rounded-full blur-[100px] pointer-events-none" />}
 
-      <div className="relative z-10 flex flex-col h-full justify-between">
+      <div className="relative z-10 flex flex-col h-full">
 
         {/* ─── TOP SECTION ─── */}
         <div>
@@ -572,48 +585,49 @@ export default function GameLobby() {
 
         </div>{/* end top section */}
 
-        {/* ═══════ TABLE (centered in remaining space) ═══════ */}
+        {/* ═══════ TABLE + SEATS ═══════ */}
         <div className="flex-1 flex items-center justify-center min-h-0">
-          <div className="relative" style={{ width: TW, height: TH }}>
+          <div className="relative" style={{ width: BOX, height: BOX }}>
 
-            {/* Outer rim glow */}
-            <div className="absolute rounded-[50%] pointer-events-none"
-              style={{
-                width: TW * 0.72, height: TH * 0.60,
-                left: '50%', top: '50%', transform: 'translate(-50%, -50%)',
-                boxShadow: isNight
-                  ? '0 0 50px 5px rgba(79,70,229,0.04), 0 0 100px 10px rgba(79,70,229,0.02)'
-                  : '0 0 50px 5px rgba(234,179,8,0.02), 0 0 100px 10px rgba(234,179,8,0.01)',
-                transition: 'box-shadow 1s',
-              }}
-            />
+            {/* 1) Orbit ring — shows exactly where seat centers sit */}
+            <div className="absolute rounded-full pointer-events-none" style={{
+              width: SEAT_R * 2, height: SEAT_R * 2,
+              left: CX - SEAT_R, top: CY - SEAT_R,
+              border: '1px dashed rgba(255,255,255,0.06)',
+            }} />
 
-            {/* Table surface — elegant felt */}
-            <div
-              className="absolute rounded-[50%]"
-              style={{
-                width: TW * 0.66, height: TH * 0.54,
-                left: '50%', top: '50%', transform: 'translate(-50%, -50%)',
-                background: isNight
-                  ? `radial-gradient(ellipse at 50% 38%, rgba(22,22,45,0.7) 0%, rgba(12,12,22,0.8) 60%, rgba(6,6,14,0.9) 100%)`
-                  : `radial-gradient(ellipse at 50% 38%, rgba(26,52,26,0.5) 0%, rgba(18,38,18,0.4) 40%, rgba(10,14,10,0.5) 100%)`,
-                border: '1px solid rgba(255,255,255,0.04)',
-                boxShadow: `
-                  inset 0 0 60px rgba(0,0,0,0.4),
-                  inset 0 2px 0 rgba(255,255,255,0.02),
-                  0 8px 30px rgba(0,0,0,0.5),
-                  0 2px 8px rgba(0,0,0,0.3)
-                `,
-                transition: 'background 1s',
-              }}
-            >
-              {/* Inner highlight rim */}
-              <div className="absolute inset-[2px] rounded-[50%] pointer-events-none"
-                style={{ border: '1px solid rgba(255,255,255,0.02)' }} />
+            {/* 2) Glow around table */}
+            <div className="absolute rounded-full pointer-events-none" style={{
+              width: TABLE_D + 60, height: TABLE_D + 60,
+              left: CX - (TABLE_D + 60) / 2, top: CY - (TABLE_D + 60) / 2,
+              boxShadow: isNight
+                ? '0 0 50px 10px rgba(79,70,229,0.06), 0 0 120px 30px rgba(79,70,229,0.025)'
+                : '0 0 50px 10px rgba(234,179,8,0.04), 0 0 120px 30px rgba(234,179,8,0.015)',
+              transition: 'box-shadow 1s',
+            }} />
 
-              {/* Light reflection */}
-              <div className="absolute inset-0 rounded-[50%] pointer-events-none"
-                style={{ background: 'radial-gradient(ellipse at 50% 20%, rgba(255,255,255,0.025) 0%, transparent 50%)' }} />
+            {/* 3) Gold frame ring */}
+            <div className="absolute rounded-full" style={{
+              width: TABLE_D + 14, height: TABLE_D + 14,
+              left: CX - (TABLE_D + 14) / 2, top: CY - (TABLE_D + 14) / 2,
+              background: 'linear-gradient(145deg, rgba(193,145,54,0.28), rgba(60,41,14,0.38))',
+              border: '1px solid rgba(236,201,120,0.22)',
+              boxShadow: '0 12px 30px rgba(0,0,0,0.5), inset 0 2px 0 rgba(255,255,255,0.1)',
+            }} />
+
+            {/* 4) Table surface */}
+            <div className="absolute rounded-full" style={{
+              width: TABLE_D, height: TABLE_D,
+              left: CX - TABLE_R, top: CY - TABLE_R,
+              background: isNight
+                ? 'radial-gradient(circle at 50% 38%, rgba(38,45,88,0.8), rgba(16,18,40,0.9) 56%, rgba(7,8,19,0.97) 100%)'
+                : 'radial-gradient(circle at 50% 38%, rgba(32,84,62,0.75), rgba(20,54,42,0.72) 56%, rgba(10,24,20,0.92) 100%)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              boxShadow: 'inset 0 0 60px rgba(0,0,0,0.4), inset 0 2px 0 rgba(255,255,255,0.05), 0 10px 25px rgba(0,0,0,0.45)',
+              transition: 'background 1s',
+            }}>
+              <div className="absolute inset-[2px] rounded-full pointer-events-none" style={{ border: '1px solid rgba(255,255,255,0.03)' }} />
+              <div className="absolute inset-0 rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 20%, rgba(255,255,255,0.03), transparent 50%)' }} />
 
               {/* Narrator */}
               <Narrator message={narratorMessage} sub={narratorSub} phase={phase} />
@@ -624,7 +638,7 @@ export default function GameLobby() {
               )}
             </div>
 
-            {/* Seats */}
+            {/* 5) Seats — positioned on exact circle around table */}
             <AnimatePresence mode="popLayout">
               {seats.map((p, i) => (
                 <Seat key={p ? p.id : `e-${i}`} player={p} index={i}
@@ -640,7 +654,7 @@ export default function GameLobby() {
         </div>
 
         {/* ═══════ BOTTOM SECTION ═══════ */}
-        <div>
+        <div className="mt-auto shrink-0">
 
         {/* ─── CHAT ─── */}
         {(isIntro || isDay || isVoting) && chatMsgs.length > 0 && (
